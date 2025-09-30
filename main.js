@@ -1123,13 +1123,14 @@ var FeishuApiClient = class {
   static extractImageInfoFromMarkdown(markdownContent, basePath) {
     const imageInfos = [];
     const convertedContent = FeishuApiClient.convertObsidianImageSyntax(markdownContent);
-    const markdownImageRegex = /!\[([^\]]*)\]\(([^\)\s]+)(?:\s+"([^"]*)")?\)/g;
+    const markdownImageRegex = /!\[([^\]]*)\]\((<[^>]+>|[^\)]+?)(?:\s+"([^"]*)")?\)/g;
     let match;
     let position = 0;
     while ((match = markdownImageRegex.exec(convertedContent)) !== null) {
       const alt = match[1];
-      const path = match[2];
+      const rawPath = match[2];
       const title = match[3];
+      const path = rawPath ? rawPath.trim().replace(/^<(.+)>$/, "$1") : "";
       if (!path)
         continue;
       const fileName = path.split("/").pop() || path;
